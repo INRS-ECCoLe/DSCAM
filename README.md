@@ -1,5 +1,4 @@
-# Directly Synthesized Lookup
-Directly Synthesized Lookup (DSL) optimization code and HDL.
+# Directly Synthesized Content Addressable Memory (DSCAM)
 
 ## Table of contents
 * [General info](#general-info)
@@ -7,7 +6,7 @@ Directly Synthesized Lookup (DSL) optimization code and HDL.
 * [Requirements](#Requirements)
 
 ## General info
-This project is simple Lorem ipsum dolor generator.
+DSCAM is a latency-guaranteed and high-throughput content-addressable memory architecture for FPGA platforms.
 	
 ## Technologies
 Project is created with:
