@@ -64,8 +64,8 @@ def plot_convergence(detailed_result_array):
                                    no_bram_vec[bram_cost_idx].append([result[ii][jj][1] for jj in range(population_size)])
                                    logic_cost[bram_cost_idx].append([result[ii][jj][0] for jj in range(population_size)])
                                    score_vec = parameters.BRAM_COSTS_TO_TEST[bram_cost_idx] * np.array(no_bram_vec[bram_cost_idx][-1]) + np.array(logic_cost[bram_cost_idx][-1])
-                                   min_score_temp = min(score_vec)
-                                   #print('hhhhhhh', no_bram_vec[bram_cost_idx][-1], '\n', logic_cost[bram_cost_idx][-1], '\n' , score_temp)
+                                   min_score_temp = min(i for i in score_vec if i > 0)
+                                   #print('hhhhhhh', no_bram_vec[bram_cost_idx][-1], '\n', logic_cost[bram_cost_idx][-1], '\n' , score_vec)
                                    if min_score_temp < best_score and min_score_temp != 0:
                                           best_score = min_score_temp
                                           print('***** found', min_score_temp, '    gen', ii)
@@ -90,9 +90,9 @@ def plot_convergence(detailed_result_array):
                      ax.xaxis.set_major_locator(mticker.MaxNLocator(integer=True))
                      ax.axes.set_ylim3d(bottom=0, top=500)
                      ax.set_title(yTitle)#'Convergence Bit-Length:')
-                     ax.set_xlabel('Generation #', fontsize=12)
-                     ax.set_ylabel('# BRAMs (est)', fontsize=12)
-                     ax.set_zlabel('Logic Cost (est)', fontsize=12)
+                     ax.set_xlabel('Generation #', fontsize=14)
+                     ax.set_ylabel('# BRAMs (est.)', fontsize=14)
+                     ax.set_zlabel('Logic Cost (est.)', fontsize=14)
                      
                      #plt.close()
                      #del ax

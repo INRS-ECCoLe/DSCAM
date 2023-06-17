@@ -370,10 +370,10 @@ class prefix_optimize:
                     #print(self.population[ii], '  # BRAMs:', self.detailed_result[generation][ii][1], '  Logic Cost:', self.detailed_result[generation][ii][0],'\n\n')
                 # select parents
                 [selected[ii], selected_score[ii]] = self.selection()
-            # create the next generation
-            generation = generation + 1   
+            # create the next generation  
             self.best_score_rec.append(best_eval)
             print(f'Length: {self.prefix_length}   BRAM Cost: {self.bram_cost}  |  Gen: {generation}    Best Chrom: {best}   Score: {best_eval}   Logic: {self.best_logic_cost}   # BRAMs: {self.best_no_bram}   Remaining: {self.best_rem_prefixes}')
+            generation = generation + 1 
         return [best, best_eval]
     
 
