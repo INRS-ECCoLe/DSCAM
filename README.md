@@ -14,7 +14,6 @@ DSCAM project includes:
 2- A genetic algorithm-based optimizer, in .\Optimizer folder, which generates a content-specific configuration files for the hardware architecture   
 
 ![DSCAM Architecture](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/DSCAM_Architecture.png)
-![DSCAM Architecture](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/DSCAM_Architecture2.svg)
 	
 ## Technologies
 Project is created with:
