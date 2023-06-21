@@ -12,6 +12,9 @@ DSCAM (Directly Synthesized Content-Addressable Momory) is an innovative latency
 DSCAM project includes:
 1- Hardware architecture templates, in .\HDL folder;
 2- A genetic algorithm-based optimizer, in .\Optimizer folder, which generates a content-specific configuration files for the hardware architecture   
+
+![DSCAM Architecture](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/DSCAM_Architecture.png)
+![DSCAM Architecture](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/DSCAM_Architecture2.svg)
 	
 ## Technologies
 Project is created with:
@@ -37,9 +40,8 @@ The best-found solution in each generation of the GA algorithm is printed and af
 The design parameters can be adjusted in .\Optimization\parameters.py. This includes GA algorithm parameters and the important parameter of BRAM_COSTS_TO_TEST that defines the cost of BRAM resources compared to the logic resources in the cost function of the GA. Users can adjust the balance between BRAM and logic utilization in the hardware core based on their design priorities using this parameter. Assigning a higher value to BRAM_COSTS_TO_TEST signifies that BRAMs are more expensive resources. As a result, GA will likely find solutions that use less BRAM resources and more logic.
 
 ### 2- Plot mode: 
-This mode is used for better visualization of GA explored solotion space and convergence projectile. This mode plots the estimated BRAM and logic utilization of all examined candidate solutions (chromosomes) during GA operation.
-To run in this mode, user must specify the target search content file in .\Optimizer\main.py and run main.py with plot_all argument.
+This mode is used for better visualization of GA explored solution space and convergence projectile. It displays the estimated BRAM and logic utilization of all the candidate solutions (chromosomes) examined during GA operation. To activate this mode, simply specify the target search content file in .\Optimizer\main.py and run main.py with the plot_all argument.
 ```
 $ python .\Optimizer\main.py plot_all
 ```
-![Plot all](Docs/Figure_23bit_200_1000_1500.png)
+![Plot All Example](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/Plot_All_23bit_200_1000_1500.png)
