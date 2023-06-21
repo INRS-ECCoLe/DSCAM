@@ -9,8 +9,8 @@
 ## General Info
 **DSCAM (Directly Synthesized Content-Addressable Momory)** is an innovative latency-guaranteed and high-throughput content-addressable memory architecture for FPGA platforms. It is the first work that allows implementation of very large CAM/TCAM memories on buget-friendly FPGAs. In herent reconfigurability of FPGAs, guaranteed fast search speed and suppoprt of large forwarding tables make SDCAM a suitable choice to replace TCAMs in SDN-enabled data planes. DSCAM does not require offchip memory access and allows user-adjustable trade-off between BRAM and logic resourse utilization. The experimental results show that the proposed method enables the implementation of an IPv4 forwarding table with over 520k prefixes on a xcku5p AMD/XILINX Kintex UltraScale+ FPGA, providing a lookup latency of less than 29ns and a throughput of 212 million lookups per second.
 
-DSCAM project includes:
-1- Hardware architecture templates, in *.\HDL* folder;
+DSCAM project includes:\
+1- Hardware architecture templates, in *.\HDL* folder;\
 2- A genetic algorithm-based optimizer, in *.\Optimizer* folder, which generates a content-specific configuration files for the hardware architecture.
 
 ![DSCAM Architecture](https://github.com/INRS-ECCoLe/DSCAM/blob/main/Docs/DSCAM_Architecture.png)

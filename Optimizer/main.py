@@ -13,7 +13,7 @@
 #
 #  Author: Shervin Vakili
 #
-#  Project: IP address lookup core
+#  Project: Directly Synthesized Content-Addressable Momory (DSCAM)
 #  
 #  Creation Date: 2022-03-14
 #
@@ -37,9 +37,9 @@ import parameters
 args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (without any argument)
 
 
-prefix_file_name = '.\Optimizer\\test_23bit.txt'
+#prefix_file_name = '.\Optimizer\\test_23bit.txt'
 #prefix_file_name = '.\Optimizer\\test_24bit.txt'
-#prefix_file_name = '.\Optimizer\\TestCase524287.txt'
+prefix_file_name = '.\Optimizer\\TestCase524287.txt'
 #prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 
 # --- Read prefix file

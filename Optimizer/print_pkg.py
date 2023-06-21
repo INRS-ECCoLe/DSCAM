@@ -13,7 +13,7 @@
 #
 #  Author: Shervin Vakili
 #
-#  Project: IP address lookup core
+#  Project: Directly Synthesized Content-Addressable Momory (DSCAM)
 #  
 #  Creation Date: 2023-04-12
 #

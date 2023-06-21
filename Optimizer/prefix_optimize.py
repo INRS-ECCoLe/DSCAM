@@ -13,11 +13,11 @@
 #
 #  Author: Shervin Vakili
 #
-#  Project: IP address lookup core
+#  Project: Directly Synthesized Content-Addressable Momory (DSCAM)
 #  
 #  Creation Date: 2022-04-16
 #
-#  Description: main optimization class
+#  Description: Main optimization class
 #---------------------------------------------------------------------------
 
 import numpy as np
