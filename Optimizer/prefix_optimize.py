@@ -95,8 +95,6 @@ class prefix_optimize:
 
         if (num_mux_bits > parameters.MAX_NUM_MUX_BITS) or (num_mux_bits == 0) or (candidate.count(0) < 2):  # candidate must contain at least a 1 and a 0
             return -1, [0 ,0, 0]
-        #if (0 in candidate):
-        #    return -1, [0 ,0, 0]
             
         num_of_mu_bits_vec = [0] * pow(2,num_mux_bits)
         mux_indexes = [jj for jj in range(self.prefix_length) if candidate[jj] == 1]
@@ -152,7 +150,6 @@ class prefix_optimize:
         selected_idx = np.random.randint(self.population_size)
         for idx in np.random.randint(0, self.population_size, parameters.TOURNOMENT_SIZE-1):
 		    # check if better in a tournament
-            #print(f'* idx = {idx}')
             if self.scores[idx] < self.scores[selected_idx]:
                 selected_idx = idx
         return [self.population[selected_idx], self.scores[selected_idx]]
@@ -309,11 +306,8 @@ class prefix_optimize:
         param_pkg_data.append(max_mux_in_width) # element 2: MAX_MUX_IN_WIDTH
         param_pkg_data.append(mux_in_width_vec) # element 3: MUX_IN_SIZE
 
-        #print('ooooooooooo:  ', param_pkg_data)
-
         return param_pkg_data
             
-    
     # --- genetic algorithm
     def genetic_algorithm(self, max_no_improve_iter, population_size):
         if population_size <= 1:
@@ -375,11 +369,4 @@ class prefix_optimize:
             print(f'Length: {self.prefix_length}   BRAM Cost: {self.bram_cost}  |  Gen: {generation}    Best Chrom: {best}   Score: {best_eval}   Logic: {self.best_logic_cost}   # BRAMs: {self.best_no_bram}   Remaining: {self.best_rem_prefixes}')
             generation = generation + 1 
         return [best, best_eval]
-    
-
-    
-
-    
-
-
     

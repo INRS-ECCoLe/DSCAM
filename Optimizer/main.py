@@ -37,9 +37,9 @@ import parameters
 args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (without any argument)
 
 
-#prefix_file_name = '.\Optimizer\\test_23bit.txt'
+prefix_file_name = '.\Optimizer\\test_23bit.txt'
 #prefix_file_name = '.\Optimizer\\test_24bit.txt'
-prefix_file_name = '.\Optimizer\\TestCase524287.txt'
+#prefix_file_name = '.\Optimizer\\TestCase524287.txt'
 #prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 
 # --- Read prefix file
@@ -119,7 +119,6 @@ elif args != [] and args[0] == 'plot_all':
                 pkg_data.append(p1.generate_result_files(result[0]))  # Generate HDL files only for the first bram cost option (BRAM_COSTS_TO_TEST)
                 candidate_vec.append(result[0][::-1])
                 length_vec.append(num_of_prefixes_vec[length])
-                #print('ffffffffffffff',  p1.detailed_result )
                 detailed_result_array[idx][length].extend(p1.detailed_result) 
                 del p1
                 idx += 1
@@ -136,7 +135,6 @@ else:
             
             bitlength_vec.append(length)
             p1 = prefix_optimize(prefix[length], length)
-            
             # genetic_algorithm(max_no_improve_iter, population_size)
             start_time = timer()
             result = p1.genetic_algorithm(parameters.TERMINATION_COUNT, parameters.POPULATION_SIZE)
