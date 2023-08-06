@@ -29,6 +29,7 @@ import parameters
 import utilities
 from bitarray.util import ba2int
 from binary_tree import binary_tree
+from itertools import combinations
 import sys
 
 # ----- 1 Ram bit to 1 gate Cost ratio used in titness calculation 
@@ -307,6 +308,31 @@ class prefix_optimize:
         param_pkg_data.append(mux_in_width_vec) # element 3: MUX_IN_SIZE
 
         return param_pkg_data
+    
+    '''
+    # --- genetic algorithm
+    def decoder_allocation(self, best):
+        mu_indexes = [i for i in range(len(best)) if best[i] == 0]
+        mu_bitwidth = len(mu_indexes)
+        print('ppp', mu_indexes)
+        test_list = [4, 5, 6, 7, 3, 8]  
+        candidates = []  # all candidate 5-bit combinations to be assigned a 5-bit decoder
+        candidates.extend(combinations(mu_indexes, 5))
+
+        for candidate in candidates:
+            print("ccc", candidate)
+            for jj in range(self.num_of_prefixes):
+                self.prefixes[jj][kk]
+
+                masked_prefix = ba2int(self.prefixes[jj] & bitmap_bitarray)
+                found = 0
+                
+                    mux_bits = ba2int(bitarray([self.prefixes[jj][kk] for kk in mux_indexes]))
+    '''
+
+
+
+
             
     # --- genetic algorithm
     def genetic_algorithm(self, max_no_improve_iter, population_size):
@@ -368,5 +394,6 @@ class prefix_optimize:
             self.best_score_rec.append(best_eval)
             print(f'Length: {self.prefix_length}   BRAM Cost: {self.bram_cost}  |  Gen: {generation}    Best Chrom: {best}   Score: {best_eval}   Logic: {self.best_logic_cost}   # BRAMs: {self.best_no_bram}   Remaining: {self.best_rem_prefixes}')
             generation = generation + 1 
+        self.decoder_allocation(best)
         return [best, best_eval]
     

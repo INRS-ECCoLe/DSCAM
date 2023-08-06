@@ -64,9 +64,9 @@ architecture TB_ip_address_lookup_tb_beh of TB_ip_address_lookup is
         
 	    dataIn <=   "11100000001000000010000000000000" , 
                     "11100000001000000010001000000000" after 7*clk_period, 
-                    "11001111001000100100101010010000" after 8*clk_period, 
+                    "01001010010101000100011000000000" after 8*clk_period, 
                     "11010101001110010111011111100000" after 9*clk_period,
-					"10111010011000000001011000000000" after 10*clk_period,
+					"11010000010111000101111000000000" after 10*clk_period,
                     "00000101101100100100000001000101" after 11*clk_period ;
         
 	   

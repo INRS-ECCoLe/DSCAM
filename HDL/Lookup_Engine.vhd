@@ -55,6 +55,13 @@ architecture lookup_engine_arch of lookup_engine is
     type muxInSize_type is array (0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1) of std_logic_vector(LOG2_MAX_MUX_IN_WIDTH(LENGTH_IND)-1 downto 0);
     signal valid_b1             : std_logic;
     -- Match Unit
+    constant MU_DEC_IN_WIDTH: integer:= 4;
+    type MU_DEC_OUT_TYPE is array (1 to NO_PREFIX_LENGTHS+1) of std_logic_vector(2**MU_DEC_IN_WIDTH-1 downto 0);
+    signal muDecOut: MU_DEC_OUT_TYPE;
+    constant NO_MU_DEC          : integer:= 2;
+    signal muDecMatch: std_logic_vector(NO_MU_DEC-1 downto 0);
+
+    
     signal MatchUnitInputBits   : std_logic_vector (MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto 0);  -- input bits that are matched in the match unit
     type matchData_type is array (0 to MAX_MUX_IN_WIDTH(LENGTH_IND)-1) of std_logic_vector(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto 0); 
     type matchArray_type is array (0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1) of matchData_type;
@@ -135,19 +142,7 @@ architecture lookup_engine_arch of lookup_engine is
         file matchFile          : text; 		 		  
 	begin
         file_open(matchFile,fileName,READ_MODE);
-        --while not endfile(matchFile) loop   
-        --    readline(matchFile, inline);
-        --    next when inline'length = 0; -- skip empty line
-        --    if inline'length <2 then
-        --        muxInCnt := muxInCnt + 1;
-        --        matchCnt := 0;
-        --    else 
-        --        read(inline, matchArray_v(muxInCnt)(matchCnt));
-        --        matchCnt := matchCnt + 1;
-        --    end if;
-        --end loop;
-        while not endfile(matchFile) loop   
-            
+        while not endfile(matchFile) loop             
             --if matchCnt >=  MUX_IN_SIZE(matchLimitInd) then
             if matchCnt >=  MUX_IN_SIZE_ARRAY(muxInCnt) then
                 muxInCnt := muxInCnt + 1;
@@ -182,13 +177,43 @@ begin
     end generate BITMAP_BITS;
 
     matchArray  <= init_match_unit_data(MATCH_UNIT_BITS_FILE(LENGTH_IND));
+
+
+    ----------------  Match Unit-----------------------------------------
+    -- DSCAM+
     
+    GENERATE_DECODER : for mu_dec_ind in 1 to NO_MU_DEC generate
+        MU_DE: Decoder 
+            generic map(WIDTH => MU_DEC_IN_WIDTH)
+            port map(
+                data_i  => MatchUnitInputBits(mu_dec_ind*MU_DEC_IN_WIDTH-1 downto (mu_dec_ind-1)*MU_DEC_IN_WIDTH),
+                clk     => clk,
+                reset   => rst,
+                data_o  => muDecOut(mu_dec_ind)		
+             );
+    end generate GENERATE_DECODER;
+
+
     GENERATE_MATCH : for mux_in_ind in 0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1 generate
-        --GENERATE_MATCH_L2 : for mux_in_cnt in 0 to MUX_IN_SIZE(MUX_IN_SIZE_START_IND(LENGTH_IND) + mux_in_ind)-1 generate
         GENERATE_MATCH_L2 : for mux_in_cnt in 0 to conv_integer(MUX_IN_SIZE_ARRAY(mux_in_ind))-1 generate
-            muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';
+            --<= '1' when MatchUnitInputBits(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto mu_dec_ind*5) = matchArray(mux_in_ind)(mux_in_cnt)(LENGTH_IND)-1 downto mu_dec_ind*5) else '0';
+                        
+            muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NO_MU_DEC*MU_DEC_IN_WIDTH) = matchArray(mux_in_ind)(mux_in_cnt)(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NO_MU_DEC*MU_DEC_IN_WIDTH) and (conv_integer(muDecMatch)=0)
+                                                else '0';
+            DECODER_OUTs : for mu_dec_ind in 1 to NO_MU_DEC generate
+                muDecMatch(mu_dec_ind-1) <= muDecOut(mu_dec_ind)(conv_integer(MatchUnitInputBits(mu_dec_ind*MU_DEC_IN_WIDTH-1 downto (mu_dec_ind-1)*MU_DEC_IN_WIDTH)));  -- matches through MU decoders
+            end generate DECODER_OUTs;
+            --muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';
         end generate GENERATE_MATCH_L2;
     end generate GENERATE_MATCH;
+
+
+    -- DSCAM
+--    GENERATE_MATCH : for mux_in_ind in 0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1 generate
+--        GENERATE_MATCH_L2 : for mux_in_cnt in 0 to conv_integer(MUX_IN_SIZE_ARRAY(mux_in_ind))-1 generate
+--            muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';
+--        end generate GENERATE_MATCH_L2;
+--    end generate GENERATE_MATCH;
 
     -----------------  Pipeline buffers ---------------------------------
     process(clk)

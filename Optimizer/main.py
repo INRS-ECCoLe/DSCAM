@@ -37,10 +37,11 @@ import parameters
 args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (without any argument)
 
 
-prefix_file_name = '.\Optimizer\\test_23bit.txt'
+#prefix_file_name = '.\Optimizer\\test_23bit.txt'
 #prefix_file_name = '.\Optimizer\\test_24bit.txt'
 #prefix_file_name = '.\Optimizer\\TestCase524287.txt'
 #prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
+prefix_file_name = '.\Optimizer\\small_test.txt'
 
 # --- Read prefix file
 with open(prefix_file_name) as prefix_file:
