@@ -1,7 +1,7 @@
 # parameters and constants
 # Output file path
-output_path = './HDL/mem_parameters2/'
-parameters_path = './mem_parameters2/'
+output_path = './HDL/mem_parameters/'
+parameters_path = './mem_parameters/'
 optimizer_path = './Optimizer/'
 # Genetic algorithm parameters
 POPULATION_SIZE = 200
