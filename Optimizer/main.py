@@ -126,6 +126,14 @@ elif args != [] and args[0] == 'plot_all':
     plot_results.plot_convergence(detailed_result_array)
     print_pkg(length_vec, prefix_length, candidate_vec, pkg_data)
 
+if args != [] and args[0] == 'H':  
+    for length in range(prefix_length+1):
+        if num_of_prefixes_vec[length] > 0 :
+            print(f'\n\n**************************** Bit Length : {length} ****************************\n')
+            
+            p1 = prefix_optimize(prefix[length], length)
+            result = p1.Heuristic_optimizer()
+
 else:
     # Ordinary optimization
     bitlength_vec = []
