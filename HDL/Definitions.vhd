@@ -12,7 +12,8 @@ package Definitions is
 	--%%%%%%%%%%%%%%  Components   %%%%%%%%%%%%%%
 
 	component Decoder is 
-		generic(WIDTH : integer);
+		generic(OUTPUT_REGISTER_EN : boolean:= True;
+				WIDTH : integer);
 		port(
 			data_i :in std_logic_vector (WIDTH-1 downto 0);
 			clk :in std_logic;
