@@ -81,7 +81,7 @@ candidate_vec = []
 index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
-    candidate = [1, 1, 1, 1, 0, 1, 1, 1, 2, 0, 2, 2, 2, 2, 2, 2, 2]
+    candidate = [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1]
     found = 0
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :
@@ -126,7 +126,7 @@ elif args != [] and args[0] == 'plot_all':
     plot_results.plot_convergence(detailed_result_array)
     print_pkg(length_vec, prefix_length, candidate_vec, pkg_data)
 
-if args != [] and args[0] == 'H':  
+elif args != [] and args[0] == 'H':  
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :
             print(f'\n\n**************************** Bit Length : {length} ****************************\n')
