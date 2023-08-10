@@ -81,7 +81,8 @@ candidate_vec = []
 index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
-    candidate = [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1]
+    #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1]
     found = 0
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :

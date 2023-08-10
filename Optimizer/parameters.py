@@ -11,4 +11,4 @@ TERMINATION_COUNT = 8  # Nubmer of generations without improvement that causes t
 LOG_PRINT_EN = True
 MAX_NUM_MUX_BITS = 18
 MAX_AVAILABLE_BRAMS = 100
-BRAM_COSTS_TO_TEST = [500] # maximum 4 elements
+BRAM_COSTS_TO_TEST = [50000] # maximum 4 elements
