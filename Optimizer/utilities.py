@@ -1,4 +1,5 @@
 import math 
+import parameters
 
 def estimate_no_brams(length, width):
     # Estimate the number of brams from the length and width   
@@ -25,3 +26,6 @@ def estimate_no_brams(length, width):
         no_brams = math.ceil(length / pow(2,9))
     #print(f'width = {width}  no_brams = {no_brams}    no_parallel_brams = {no_parallel_brams}')
     return no_brams * no_parallel_brams
+
+def estimate_no_luts(num_remained_prefix):
+    return num_remained_prefix * parameters.PREFIX_LUT_COST;

@@ -38,9 +38,9 @@ args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (wit
 
 
 #prefix_file_name = '.\Optimizer\\test_23bit.txt'
-#prefix_file_name = '.\Optimizer\\test_24bit.txt'
+prefix_file_name = '.\Optimizer\\test_24bit.txt'
 #prefix_file_name = '.\Optimizer\\TestCase524287.txt'
-prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
+#prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 #prefix_file_name = '.\Optimizer\\small_test.txt'
 
 # --- Read prefix file
@@ -82,7 +82,7 @@ index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
     #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1]
+    candidate =  [0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2]
     found = 0
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :

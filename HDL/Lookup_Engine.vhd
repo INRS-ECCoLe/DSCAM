@@ -56,7 +56,7 @@ architecture lookup_engine_arch of lookup_engine is
     signal valid_b1             : std_logic;
     -- Match Unit
     constant MU_DEC_IN_WIDTH: integer:= 4;
-    constant NO_MU_DEC          : integer:= 2;
+    constant NO_MU_DEC          : integer:= 0;
 
     type MU_DEC_OUT_TYPE is array (1 to NO_MU_DEC) of std_logic_vector(2**MU_DEC_IN_WIDTH-1 downto 0);
     signal muDecOut: MU_DEC_OUT_TYPE;
