@@ -5,7 +5,7 @@ library std;
 use std.textio.all;
 entity Decoder is
 	generic(OUTPUT_REGISTER_EN: boolean:= true;
-			WIDTH : integer);
+			WIDTH : integer:= 8);
 	port(
 		data_i :in std_logic_vector (WIDTH-1 downto 0);
 		clk :in std_logic;

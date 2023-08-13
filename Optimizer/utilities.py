@@ -1,4 +1,5 @@
 import math 
+import numpy as np
 import parameters
 
 def estimate_no_brams(length, width):
@@ -27,5 +28,14 @@ def estimate_no_brams(length, width):
     #print(f'width = {width}  no_brams = {no_brams}    no_parallel_brams = {no_parallel_brams}')
     return no_brams * no_parallel_brams
 
-def estimate_no_luts(num_remained_prefix):
-    return num_remained_prefix * parameters.PREFIX_LUT_COST;
+def estimate_no_luts(num_remained_prefix, mu_bitwidth, mux_bitwidth, max_mux_in):
+    alpha = 0.113595
+    beta  = 0.433727
+    gamma = 0.0929415
+    MU_cost_vec = np.array(num_remained_prefix) * np.array(mu_bitwidth) # MU cost
+    MUX_cost_vec = np.power(2,np.array(mux_bitwidth))
+    dec_cost_vec = np.array(max_mux_in)*np.log2(np.array(max_mux_in))
+    cost = MU_cost_vec * alpha   +   MUX_cost_vec * beta   +    dec_cost_vec * gamma
+
+    return cost
+

@@ -83,16 +83,16 @@ class prefix_optimize:
         bitmap_bitarray = bitarray()
         num_mux_bits = 0
         num_bitmap_bits = 0
-        # mux_bitarray[i] = 1 means i'th bit is matched via MUX
-        mux_bitarray = bitarray([])
-        # bitmap_bitarray[i] = 1 means i'th bit is matched via bitmap table
         bitmap_bitarray = bitarray([])
+        mu_bitarray = bitarray([])
         
         for jj in range(self.prefix_length):
-            mux_bitarray.extend(str(int(candidate[jj] == 1)))
+            mu_bitarray.extend(str(int(candidate[jj] == 0)))
             bitmap_bitarray.extend(str(int(candidate[jj] != 2)))  # bits that are not resolved by bitmap table (i.e., are resolved by match unit or MUX)
             num_mux_bits = num_mux_bits + int(candidate[jj] == 1)
             num_bitmap_bits = num_bitmap_bits + int(candidate[jj] == 2)
+        
+        #print(f'{candidate}     mu_bitarray: {mu_bitarray}    bitmap_bitarray:{bitmap_bitarray}')
 
         if (num_mux_bits > parameters.MAX_NUM_MUX_BITS) or (num_mux_bits == 0) or (candidate.count(0) < 2):  # candidate must contain at least a 1 and a 0
             return -1, [0 ,0, 0]
@@ -101,29 +101,32 @@ class prefix_optimize:
         mux_indexes = [jj for jj in range(self.prefix_length) if candidate[jj] == 1]
         match_unit_indexes = [jj for jj in range(self.prefix_length) if candidate[jj] == 0]
         num_of_remained_prefixes = 1
+        num_of_remained_prefixes_mu = 1
         if num_mux_bits:
             mux_bits = ba2int(bitarray([self.prefixes[0][kk] for kk in mux_indexes]))
             num_of_mu_bits_vec[mux_bits] += 1
         
         btree = binary_tree(ba2int(self.prefixes[0] & bitmap_bitarray))
+        btree_mu = binary_tree(ba2int(self.prefixes[0] & mu_bitarray))
         #print(bitmap_bitarray, '          ', candidate)
         #cnt=0
-        for jj in range(1,self.num_of_prefixes):
+        for jj in range(self.num_of_prefixes):
             masked_prefix = ba2int(self.prefixes[jj] & bitmap_bitarray)
-            found = 0
             if btree.insert(masked_prefix):
                 num_of_remained_prefixes = num_of_remained_prefixes + 1 
                 if num_mux_bits:
                     mux_bits = ba2int(bitarray([self.prefixes[jj][kk] for kk in mux_indexes]))
                     num_of_mu_bits_vec[mux_bits] += 1    # increamenting the number of match circuits that correspond to mux_bits' input of the MUX
                 #cnt += 1
+            masked_prefix_mu = ba2int(self.prefixes[jj] & mu_bitarray)
+            if btree_mu.insert(masked_prefix_mu):
+                num_of_remained_prefixes_mu = num_of_remained_prefixes_mu + 1 
+        print(f'num_of_remained_prefixes_mu = {num_of_remained_prefixes_mu}        num_of_remained_prefixes = {num_of_remained_prefixes} ')
                 
         # cost function
         max_mux_in_width = max(num_of_mu_bits_vec) 
-        nonzero_mux_inputs = np.count_nonzero(num_of_mu_bits_vec)
-        mu_cost = sum(num_of_mu_bits_vec)   # The cost of match unit
-        mux_cost = nonzero_mux_inputs * max_mux_in_width
-        encoder_cost = pow(max_mux_in_width, 2)
+        print(f'max_mux_in_width: {max_mux_in_width}     {sum(num_of_mu_bits_vec)}')
+
         offset1_mem_cost =  utilities.estimate_no_brams(pow(2,num_mux_bits), math.ceil(math.log2(sum(num_of_mu_bits_vec))))
         if num_bitmap_bits > 0:
             bitmap_mem_cost =  utilities.estimate_no_brams(num_of_remained_prefixes, pow(2, num_bitmap_bits))
@@ -133,8 +136,9 @@ class prefix_optimize:
             offset2_mem_cost = 0
         #score = (nonzero_mux_inputs * max_mux_in_width) + (num_of_remained_prefixes * pow(2, num_bitmap_bits)) 
         overal_no_brams = (offset1_mem_cost + bitmap_mem_cost + offset2_mem_cost)
+        overal_logic_cost = utilities.estimate_no_luts(num_of_remained_prefixes_mu, self.prefix_length-num_bitmap_bits-num_mux_bits, num_mux_bits ,max_mux_in_width)
         #overal_logic_cost = mu_cost + mux_cost + encoder_cost
-        overal_logic_cost = utilities.estimate_no_luts(num_of_remained_prefixes)
+        #overal_logic_cost = utilities.estimate_no_luts(num_of_remained_prefixes)
         if overal_no_brams <= parameters.MAX_AVAILABLE_BRAMS: # if the number of BRAMS is within the acceptable range
             score = overal_logic_cost + self.bram_cost * overal_no_brams
         else:  # doubling the BRAM cost
@@ -381,7 +385,7 @@ class prefix_optimize:
     def Heuristic_optimizer(self):
         bitmap_idx_not = [1] * self.prefix_length
         # -- find the bitmap bits
-        best_overal_cost = self.num_of_prefixes*3#(pow(2,self.prefix_length-5)*self.num_of_prefixes)
+        best_overal_cost = self.num_of_prefixes*parameters.PREFIX_LUT_COST#(pow(2,self.prefix_length-5)*self.num_of_prefixes)
         for cnt in range(self.prefix_length):
             best_remained_num_prefix = self.num_of_prefixes
             for idx in range(self.prefix_length):
@@ -391,7 +395,7 @@ class prefix_optimize:
                     btree = binary_tree(ba2int(self.prefixes[0] & bitmap_bitarray))
                     #print(bitmap_bitarray, '          ', candidate)
                     num_of_remained_prefixes = 0
-                    for jj in range(1,self.num_of_prefixes):
+                    for jj in range(self.num_of_prefixes):
                         masked_prefix = ba2int(self.prefixes[jj] & bitmap_bitarray)
                         if btree.insert(masked_prefix):
                             num_of_remained_prefixes = num_of_remained_prefixes + 1   
@@ -408,10 +412,11 @@ class prefix_optimize:
             
             #mu_mux_bits = sum(bitmap_idx_not)-1  # number of input bits handled by MU of MUX units
             #overal_logic_cost = (pow(2,(mu_mux_bits-5)) * best_remained_num_prefix)
-            overal_lut_cost = utilities.estimate_no_luts(best_remained_num_prefix)
+            #overal_lut_cost = utilities.estimate_no_luts(best_remained_num_prefix)
+            overal_lut_cost = best_remained_num_prefix * parameters.PREFIX_LUT_COST
             if bitmap_num_bram <= parameters.MAX_AVAILABLE_BRAMS:
                 best_cost = overal_lut_cost + self.bram_cost * (bitmap_num_bram + offset2_mem_cost)
-                #print(f'******* best_cost = {best_cost}      best_overal_cost = {best_overal_cost}    bitmap_mem_cost: {bitmap_num_bram}')
+                print(f'******* best_cost = {best_cost}      best_overal_cost = {best_overal_cost}    bitmap_mem_cost: {bitmap_num_bram}')
 
             if best_overal_cost > best_cost:
                 best_overal_cost = best_cost
@@ -423,32 +428,43 @@ class prefix_optimize:
 
         # Find bits to be assigned to MUX
         mu_mux_bits = sum(bitmap_idx_not)
+        mux_idx = [] # bit indexes assigned to MUX
         candidate = [0] * self.prefix_length
-        best_mux_bit_cost = self.num_of_prefixes * pow(2,mu_mux_bits)
+        best_mux_bit_cost = utilities.estimate_no_luts(self.num_of_prefixes, mu_mux_bits, 0, self.num_of_prefixes) #self.num_of_prefixes * pow(2,mu_mux_bits)
         for idx in range(self.prefix_length):
             if bitmap_idx_not[idx] == 0:
                 candidate[idx] = 2
         for cnt in range(mu_mux_bits):
             best_idx = -1
+            
             for idx in range(self.prefix_length):
+                mux_idx_temp = mux_idx.copy()
                 bitmap_bitarray = bitarray(bitmap_idx_not)
                 if candidate[idx] == 0:
+                    #print("---bitmap_bitarray: ", bitmap_bitarray, "    idx: ", idx)
+
                     bitmap_bitarray[idx] = 0
                     ii = 0
                     remained_prefixes_0 = 0
                     btree0 = binary_tree(ba2int(self.prefixes[0] & bitmap_bitarray))
                     remained_prefixes_0 = 1
-
-                    for jj in range(1,self.num_of_prefixes):
+                    mux_idx_temp.append(idx)
+                    num_mux_in = [0] * (2**len(mux_idx_temp))
+                    for jj in range(self.num_of_prefixes):
                         masked_prefix = ba2int(self.prefixes[jj] & bitmap_bitarray)
                         #if self.prefixes[jj][idx] == 0:
                         if btree0.insert(masked_prefix):
-                                remained_prefixes_0 = remained_prefixes_0 + 1 
+                            remained_prefixes_0 = remained_prefixes_0 + 1 
 
-                    mux_bit_cost = ((remained_prefixes_0) * (mu_mux_bits-cnt-1)) + ((remained_prefixes_0+1)) + pow(2,cnt+1) #* (1/100)
-                    #print("remained_prefixes_1: ", remained_prefixes_1,  "       remained_prefixes_0:" , remained_prefixes_0,  "      mux_bit_cost:", mux_bit_cost, "     remained_prefixes_0 ", remained_prefixes_0)
+                            num_mux_in[ba2int(bitarray([self.prefixes[jj][kk] for kk in mux_idx_temp]))] += 1
+                            #print(f'num_mux_in: {num_mux_in}      self.prefixes[jj]: {self.prefixes[jj]}    {idx}     {bitmap_bitarray}          {mux_idx_temp}       {mux_idx}')
+
+
+                    #mux_bit_cost = ((remained_prefixes_0) * (mu_mux_bits-cnt-1)) + ((remained_prefixes_0+1)) + pow(2,cnt+1) #* (1/100)
+                    
+                    mux_bit_cost = utilities.estimate_no_luts(remained_prefixes_0, (mu_mux_bits-cnt-1), (cnt+1), max(num_mux_in))
                     if  mux_bit_cost < best_mux_bit_cost:
-                        #print (" * best_mux_bit_cost: ", best_mux_bit_cost, "          mux_bit_cost", mux_bit_cost,"      idx: ", idx)
+                        print (" * best_mux_bit_cost: ", best_mux_bit_cost, "          mux_bit_cost", mux_bit_cost,"      idx: ", idx  , "   remained_prefixe: ", remained_prefixes_0,  "    ", max(num_mux_in))
                         best_idx = idx
                         best_mux_bit_cost = mux_bit_cost
                     del btree0
@@ -457,6 +473,8 @@ class prefix_optimize:
             else:
                 candidate[best_idx] = 1
                 bitmap_idx_not[best_idx] = 0
+                mux_idx.append(best_idx)
+                print('--------- mux_idx', mux_idx,"   candidate:", candidate )
 
             print (" *** candidate: ", candidate, "       best_mux_bit_cost: ", best_mux_bit_cost, "      best_idx: ", best_idx)
 

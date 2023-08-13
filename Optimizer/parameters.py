@@ -8,7 +8,9 @@ POPULATION_SIZE = 500
 TOURNOMENT_SIZE = 50
 TERMINATION_COUNT = 8  # Nubmer of generations without improvement that causes termination of GA
 # Misc
-LOG_PRINT_EN = True
+LOG_PRINT_EN = False
+DECODER_FOR_MATCH_UNIT = True
 MAX_NUM_MUX_BITS = 18
 MAX_AVAILABLE_BRAMS = 100
 BRAM_COSTS_TO_TEST = [500] # maximum 4 elements
+PREFIX_LUT_COST = 5

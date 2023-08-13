@@ -38,9 +38,9 @@ args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (wit
 
 
 #prefix_file_name = '.\Optimizer\\test_23bit.txt'
-prefix_file_name = '.\Optimizer\\test_24bit.txt'
+#prefix_file_name = '.\Optimizer\\test_24bit.txt'
 #prefix_file_name = '.\Optimizer\\TestCase524287.txt'
-#prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
+prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 #prefix_file_name = '.\Optimizer\\small_test.txt'
 
 # --- Read prefix file
@@ -82,7 +82,7 @@ index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
     #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    candidate =  [0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2]
+    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] 
     found = 0
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :
@@ -128,6 +128,7 @@ elif args != [] and args[0] == 'plot_all':
     print_pkg(length_vec, prefix_length, candidate_vec, pkg_data)
 
 elif args != [] and args[0] == 'H':  
+    # Heuristic optimization
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :
             print(f'\n\n**************************** Bit Length : {length} ****************************\n')
@@ -136,7 +137,7 @@ elif args != [] and args[0] == 'H':
             result = p1.Heuristic_optimizer()
 
 else:
-    # Ordinary optimization
+    # Genetic optimization
     bitlength_vec = []
     best_score_rec = []
     for length in range(prefix_length+1):

@@ -23,38 +23,6 @@ package Definitions is
 	end component;	 
 	
 	
---	component ComparatorBlock is		
---		generic(												  
---  			IPWidth :integer ;
---  			MaskBit :integer ;	  
---			TableWidth: integer;--Number of bits for size of the Table
---			PortBit : natural; 		   
---			Div : integer ; -- division to make groups of 8
---			MAXTableWidth : integer ;--41044;
---			RoutingTable : IP_Mask_Table
--- 		);
---		port(
---			MB_in 	: in Decoders_Outputs_Type;--std_logic_vector ((IPWidth/Div)*(2**Div)-1 downto 0);
---			IP_in 	: in std_logic_vector (IPWidth-1 downto 0);		  
---			clk 	: in std_logic;
---			reset	: in std_logic;				  
---			Match 	: out std_logic_vector (0 to MAXTableWidth-1)	
--- 		);	 
---	end component; 
-				   
-	
---	component NHI	
---	   generic(												  
---  			RoutingTableSize: integer;--Number of bits for size of the ROM
---			PortBit : natural
--- 		);
---	    port (													 
---			clk 	:in  std_logic; 					
---       		address :in   integer;--std_logic_vector (TableWidth-1 downto 0);
---       		data    :out std_logic_vector (PortBit-1 downto 0)
---   		);
---	end component; 
-	
 	component ConstMemory is  
 		generic(												  
 			LENGTH			: integer:=1024;
