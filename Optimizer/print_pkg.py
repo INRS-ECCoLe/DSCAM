@@ -71,7 +71,7 @@ def print_pkg(num_of_prefixes_vec, input_width, candidate, pkg_data):
             if log2_max_mux_in_width[jj] == 0:
                 log2_max_mux_in_width[jj] = 1
         mux_in_size_vec = pkg_data[0][2]
-        #print('ssssssssssssssssssss', pkg_data[0][2])
+        print('ssssssssssssssssssss', pkg_data)
         mux_in_size_start = [0] * (no_prefix_widths)
         mu_ind_start = [0] * (no_prefix_widths)
         mux_ind_start = [0] * (no_prefix_widths)
@@ -106,8 +106,12 @@ def print_pkg(num_of_prefixes_vec, input_width, candidate, pkg_data):
         #print_constant('MUX_IN_SIZE', 'MUX_IN_SIZE_TYPE',mux_in_size_vec, pmtr_file)
         print(f'type MATCH_UNIT_INDEX_TYPE is array (1 to {len(mu_indexes_flat_vec)}) of integer;', file=pmtr_file)
         print_constant('MATCH_UNIT_INDEX', 'MATCH_UNIT_INDEX_TYPE', mu_indexes_flat_vec, pmtr_file)
-        print(f'type MUX_BIT_INDEX_TYPE is array (1 to {len(mux_indexes_flat_vec)}) of integer;', file=pmtr_file)
-        print_constant('MUX_BIT_INDEX', 'MUX_BIT_INDEX_TYPE', mux_indexes_flat_vec, pmtr_file)
+        if len(mux_indexes_flat_vec) == 1:
+            print(f'type MUX_BIT_INDEX_TYPE is array (1 to {len(mux_indexes_flat_vec)+1}) of integer;', file=pmtr_file)
+            print_constant('MUX_BIT_INDEX', 'MUX_BIT_INDEX_TYPE', mux_indexes_flat_vec+[0], pmtr_file)
+        else:
+            print(f'type MUX_BIT_INDEX_TYPE is array (1 to {len(mux_indexes_flat_vec)}) of integer;', file=pmtr_file)
+            print_constant('MUX_BIT_INDEX', 'MUX_BIT_INDEX_TYPE', mux_indexes_flat_vec, pmtr_file)
         if len(bitmap_indexes_flat_vec) > 1:
             print(f'type BITMAP_INDEX_TYPE is array (1 to {len(bitmap_indexes_flat_vec)}) of integer;', file=pmtr_file)
             print_constant('BITMAP_BIT_INDEX', 'BITMAP_INDEX_TYPE', bitmap_indexes_flat_vec, pmtr_file)

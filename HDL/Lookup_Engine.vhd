@@ -55,8 +55,8 @@ architecture lookup_engine_arch of lookup_engine is
     type muxInSize_type is array (0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1) of std_logic_vector(LOG2_MAX_MUX_IN_WIDTH(LENGTH_IND)-1 downto 0);
     signal valid_b1             : std_logic;
     -- Match Unit
-    constant MU_DEC_IN_WIDTH: integer:= 4;
-    constant NO_MU_DEC          : integer:= 0;
+    constant MU_DEC_IN_WIDTH: integer:= 5;
+    constant NO_MU_DEC          : integer:= 4;
 
     type MU_DEC_OUT_TYPE is array (1 to NO_MU_DEC) of std_logic_vector(2**MU_DEC_IN_WIDTH-1 downto 0);
     signal muDecOut: MU_DEC_OUT_TYPE;

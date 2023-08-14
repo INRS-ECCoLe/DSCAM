@@ -42,6 +42,7 @@ args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (wit
 #prefix_file_name = '.\Optimizer\\TestCase524287.txt'
 prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 #prefix_file_name = '.\Optimizer\\small_test.txt'
+prefix_file_name = '.\Optimizer\\test_21_1000.txt'
 
 # --- Read prefix file
 with open(prefix_file_name) as prefix_file:
@@ -82,7 +83,10 @@ index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
     #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] 
+    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]             
+    if 1 not in candidate:
+        print("ERROR: at least one input bit must be assigned to MUX!")
+        quit()
     found = 0
     for length in range(prefix_length+1):
         if num_of_prefixes_vec[length] > 0 :
@@ -134,7 +138,7 @@ elif args != [] and args[0] == 'H':
             print(f'\n\n**************************** Bit Length : {length} ****************************\n')
             
             p1 = prefix_optimize(prefix[length], length)
-            result = p1.Heuristic_optimizer()
+            result = p1.heuristic_optimizer()
 
 else:
     # Genetic optimization
@@ -152,7 +156,7 @@ else:
             result_vec.append(result[0])
             best_score_rec.append(p1.best_score_rec)
             stop_time = timer()
-
+            print("  result: ", result)
             # Generate memory content files
             pkg_data.append(p1.generate_result_files(result[0]))
             candidate_vec.append(result[0][::-1])
@@ -166,8 +170,9 @@ else:
                                          length_vec[-1], p1.best_no_bram, p1.best_logic_cost, p1.best_rem_prefixes)
             del p1
     print_pkg(length_vec, prefix_length, candidate_vec, pkg_data)
-    with open(parameters.optimizer_path + 'log.csv', 'a', newline='') as outfile:
-        writer = csv.writer(outfile, lineterminator='\n')
-        writer.writerow('')
+    if parameters.LOG_PRINT_EN == True:
+        with open(parameters.optimizer_path + 'log.csv', 'a', newline='') as outfile:
+            writer = csv.writer(outfile, lineterminator='\n')
+            writer.writerow('')
     # plot the results
     plot_results.plot_results(bitlength_vec, best_score_rec)
