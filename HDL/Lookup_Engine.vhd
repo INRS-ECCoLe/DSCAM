@@ -56,15 +56,15 @@ architecture lookup_engine_arch of lookup_engine is
     signal valid_b1             : std_logic;
     -- Match Unit
     constant MU_DEC_IN_WIDTH: integer:= 5;
-    constant NO_MU_DEC          : integer:= 4;
-
-    type MU_DEC_OUT_TYPE is array (1 to NO_MU_DEC) of std_logic_vector(2**MU_DEC_IN_WIDTH-1 downto 0);
+    --constant NO_MU_DEC          : integer:= 4;
+    
+    type MU_DEC_OUT_TYPE is array (1 to NUM_MU_DECODERS(LENGTH_IND)) of std_logic_vector(2**MU_DEC_IN_WIDTH-1 downto 0);
     signal muDecOut: MU_DEC_OUT_TYPE;
 
-    type muDecMatchVec_type is array (0 to MAX_MUX_IN_WIDTH(LENGTH_IND)-1) of std_logic_vector(NO_MU_DEC-1 downto 0);
+    type muDecMatchVec_type is array (0 to MAX_MUX_IN_WIDTH(LENGTH_IND)-1) of std_logic_vector(NUM_MU_DECODERS(LENGTH_IND)-1 downto 0);
     type muDecMatch_type is array (0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1) of muDecMatchVec_type;
     signal muDecMatch: muDecMatch_type;
-    constant allOne: std_logic_vector(NO_MU_DEC-1 downto 0) := (others => '1');
+    constant allOne: std_logic_vector(NUM_MU_DECODERS(LENGTH_IND)-1 downto 0) := (others => '1');
 
     
     signal MatchUnitInputBits   : std_logic_vector (MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto 0);  -- input bits that are matched in the match unit
@@ -186,8 +186,8 @@ begin
 
     ----------------  Match Unit-----------------------------------------
     -- DSCAM+
-    MU_DECODER: if NO_MU_DEC > 0 generate
-        GENERATE_DECODER : for mu_dec_ind in 1 to NO_MU_DEC generate
+    MU_DECODER: if NUM_MU_DECODERS(LENGTH_IND) > 0 generate
+        GENERATE_DECODER : for mu_dec_ind in 1 to NUM_MU_DECODERS(LENGTH_IND) generate
             MU_DE: Decoder 
                 generic map(OUTPUT_REGISTER_EN => False,
                             WIDTH => MU_DEC_IN_WIDTH)
@@ -201,12 +201,12 @@ begin
     end generate MU_DECODER;
 
     -- MU-assigned input bits are partially decoded
-    WITH_MU_DECODER: if NO_MU_DEC > 0 and MATCH_UNIT_BITWIDTH(LENGTH_IND) > MU_DEC_IN_WIDTH*NO_MU_DEC generate   
+    WITH_MU_DECODER: if NUM_MU_DECODERS(LENGTH_IND) > 0 and MATCH_UNIT_BITWIDTH(LENGTH_IND) > MU_DEC_IN_WIDTH*NUM_MU_DECODERS(LENGTH_IND) generate   
         GENERATE_MATCH : for mux_in_ind in 0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1 generate
             GENERATE_MATCH_L2 : for mux_in_cnt in 0 to conv_integer(MUX_IN_SIZE_ARRAY(mux_in_ind))-1 generate                        
-                muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NO_MU_DEC*MU_DEC_IN_WIDTH) = matchArray(mux_in_ind)(mux_in_cnt)(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NO_MU_DEC*MU_DEC_IN_WIDTH) and (muDecMatch(mux_in_ind)(mux_in_cnt)=allOne)
+                muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NUM_MU_DECODERS(LENGTH_IND)*MU_DEC_IN_WIDTH) = matchArray(mux_in_ind)(mux_in_cnt)(MATCH_UNIT_BITWIDTH(LENGTH_IND)-1 downto NUM_MU_DECODERS(LENGTH_IND)*MU_DEC_IN_WIDTH) and (muDecMatch(mux_in_ind)(mux_in_cnt)=allOne)
                                                     else '0';
-                DECODER_OUTs : for mu_dec_ind in 1 to NO_MU_DEC generate
+                DECODER_OUTs : for mu_dec_ind in 1 to NUM_MU_DECODERS(LENGTH_IND) generate
                     muDecMatch(mux_in_ind)(mux_in_cnt)(mu_dec_ind-1) <= muDecOut(mu_dec_ind)(conv_integer(matchArray(mux_in_ind)(mux_in_cnt)(mu_dec_ind*MU_DEC_IN_WIDTH-1 downto (mu_dec_ind-1)*MU_DEC_IN_WIDTH)));  -- matches through MU decoders
                 end generate DECODER_OUTs;
                 --muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';
@@ -215,11 +215,11 @@ begin
     end generate WITH_MU_DECODER;
 
     -- All MU-assigned input bits are decoded
-    WITH_ONLY_MU_DECODER: if NO_MU_DEC > 0 and MATCH_UNIT_BITWIDTH(LENGTH_IND) <= MU_DEC_IN_WIDTH*NO_MU_DEC generate
+    WITH_ONLY_MU_DECODER: if NUM_MU_DECODERS(LENGTH_IND) > 0 and MATCH_UNIT_BITWIDTH(LENGTH_IND) <= MU_DEC_IN_WIDTH*NUM_MU_DECODERS(LENGTH_IND) generate
         GENERATE_MATCH : for mux_in_ind in 0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1 generate
             GENERATE_MATCH_L2 : for mux_in_cnt in 0 to conv_integer(MUX_IN_SIZE_ARRAY(mux_in_ind))-1 generate                        
                 muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when muDecMatch(mux_in_ind)(mux_in_cnt)=allOne  else '0';
-                DECODER_OUTs : for mu_dec_ind in 1 to NO_MU_DEC generate
+                DECODER_OUTs : for mu_dec_ind in 1 to NUM_MU_DECODERS(LENGTH_IND) generate
                     muDecMatch(mux_in_ind)(mux_in_cnt)(mu_dec_ind-1) <= muDecOut(mu_dec_ind)(conv_integer(matchArray(mux_in_ind)(mux_in_cnt)(mu_dec_ind*MU_DEC_IN_WIDTH-1 downto (mu_dec_ind-1)*MU_DEC_IN_WIDTH)));  -- matches through MU decoders
                 end generate DECODER_OUTs;
                 --muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';
@@ -228,7 +228,7 @@ begin
     end generate WITH_ONLY_MU_DECODER;
     
     -- No decoder
-    WITHOUT_MU_DECODER: if NO_MU_DEC = 0 generate
+    WITHOUT_MU_DECODER: if NUM_MU_DECODERS(LENGTH_IND) = 0 generate
         GENERATE_MATCH : for mux_in_ind in 0 to 2**MUX_ADDR_WIDTH(LENGTH_IND)-1 generate
             GENERATE_MATCH_L2 : for mux_in_cnt in 0 to conv_integer(MUX_IN_SIZE_ARRAY(mux_in_ind))-1 generate                        
                 muxInPre(mux_in_ind)(mux_in_cnt) <= '1' when MatchUnitInputBits = matchArray(mux_in_ind)(mux_in_cnt) else '0';

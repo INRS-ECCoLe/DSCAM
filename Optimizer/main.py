@@ -42,7 +42,7 @@ args = sys.argv[1:]  # 3 functions: plot_all, bebug, [default optimization] (wit
 #prefix_file_name = '.\Optimizer\\TestCase524287.txt'
 prefix_file_name = '.\Optimizer\\generated_prefix_file.txt'
 #prefix_file_name = '.\Optimizer\\small_test.txt'
-prefix_file_name = '.\Optimizer\\test_21_1000.txt'
+#prefix_file_name = '.\Optimizer\\test_21_1000.txt'
 
 # --- Read prefix file
 with open(prefix_file_name) as prefix_file:
@@ -83,7 +83,7 @@ index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
     #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]             
+    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]             
     if 1 not in candidate:
         print("ERROR: at least one input bit must be assigned to MUX!")
         quit()
@@ -93,7 +93,8 @@ if args != [] and args[0] == 'debug':
             if length == len(candidate):
                 found = 1
                 p1 = prefix_optimize(prefix[length], length)
-                print(f' ------------- {p1.score_calc(candidate)}')
+                score_result = p1.score_calc(candidate)
+                print(f' ------------- Score: {score_result[0]}     Remained Prefixes: {score_result[1][2]}')
                 # Generate memory content files
                 pkg_data.append(p1.generate_result_files(candidate))
                 candidate_vec.append(candidate[::-1])
@@ -138,7 +139,12 @@ elif args != [] and args[0] == 'H':
             print(f'\n\n**************************** Bit Length : {length} ****************************\n')
             
             p1 = prefix_optimize(prefix[length], length)
-            result = p1.heuristic_optimizer()
+            candidate = p1.heuristic_optimizer()
+            # Generate memory content files
+            pkg_data.append(p1.generate_result_files(candidate))
+            candidate_vec.append(candidate[::-1])
+            length_vec.append(num_of_prefixes_vec[length])
+            print_pkg(length_vec, prefix_length, candidate_vec, pkg_data)
 
 else:
     # Genetic optimization

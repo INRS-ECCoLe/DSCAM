@@ -22,6 +22,7 @@
 
 import math
 import parameters
+import numpy as np
 from math import log
 
 def print_pkg(num_of_prefixes_vec, input_width, candidate, pkg_data):
@@ -71,7 +72,7 @@ def print_pkg(num_of_prefixes_vec, input_width, candidate, pkg_data):
             if log2_max_mux_in_width[jj] == 0:
                 log2_max_mux_in_width[jj] = 1
         mux_in_size_vec = pkg_data[0][2]
-        print('ssssssssssssssssssss', pkg_data)
+        #print('ssssssssssssssssssss', pkg_data)
         mux_in_size_start = [0] * (no_prefix_widths)
         mu_ind_start = [0] * (no_prefix_widths)
         mux_ind_start = [0] * (no_prefix_widths)
@@ -102,6 +103,12 @@ def print_pkg(num_of_prefixes_vec, input_width, candidate, pkg_data):
         print_constant('MUX_IND_START', 'PARAMETER_ARRAY_TYPE', mux_ind_start+[0], pmtr_file)
         print_constant('BITMAP_IND_START', 'PARAMETER_ARRAY_TYPE', bitmap_ind_start+[0], pmtr_file)
         print_constant('TOTAL_MUX_INPUTS', 'integer',mux_in_size_start[no_prefix_widths-1]+2 ** mux_bitwidth[no_prefix_widths-1], pmtr_file)
+        
+        if parameters.DECODER_FOR_MATCH_UNIT == True:
+            num_decoders_vec= (np.floor(np.array(mu_bitwidth)/5)).astype(int)
+            print_constant('NUM_MU_DECODERS', 'PARAMETER_ARRAY_TYPE', num_decoders_vec.tolist()+[0], pmtr_file)
+        else:
+            print_constant('NUM_MU_DECODERS', 'PARAMETER_ARRAY_TYPE', (len(bitwidths)+1)*[0], pmtr_file)
         print('type MUX_IN_SIZE_TYPE is array (0 to TOTAL_MUX_INPUTS-1) of integer;', file=pmtr_file)
         #print_constant('MUX_IN_SIZE', 'MUX_IN_SIZE_TYPE',mux_in_size_vec, pmtr_file)
         print(f'type MATCH_UNIT_INDEX_TYPE is array (1 to {len(mu_indexes_flat_vec)}) of integer;', file=pmtr_file)

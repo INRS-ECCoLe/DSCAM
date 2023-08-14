@@ -120,10 +120,6 @@ class prefix_optimize:
                     #temp = self.prefixes[jj] & bitmap_bitarray
                     mux_bits = ba2int(bitarray([self.prefixes[jj][kk] for kk in mux_indexes]))
                     num_of_mu_bits_vec[mux_bits] += 1    # increamenting the number of match circuits that correspond to mux_bits' input of the MUX
-            #print("yyyyyyyyy  mu_bitarray    " ,mu_bitarray) 
-            #masked_prefix_mu = ba2int(self.prefixes[jj] & mu_bitarray)
-            #if btree_mu.insert(masked_prefix_mu):
-            #    num_of_remained_prefixes_mu = num_of_remained_prefixes_mu + 1 
                 
         #print(f'num_of_remained_prefixes_mu = {num_of_remained_prefixes_mu}        num_of_remained_prefixes = {num_of_remained_prefixes} ')
                 
@@ -138,20 +134,15 @@ class prefix_optimize:
         else:
             bitmap_mem_cost = 0
             offset2_mem_cost = 0
-        #score = (nonzero_mux_inputs * max_mux_in_width) + (num_of_remained_prefixes * pow(2, num_bitmap_bits)) 
         overal_no_brams = (offset1_mem_cost + bitmap_mem_cost + offset2_mem_cost)
         overal_logic_cost = utilities.estimate_no_luts(num_of_remained_prefixes, self.prefix_length-num_bitmap_bits-num_mux_bits, num_mux_bits ,max_mux_in_width)
-        #overal_logic_cost = mu_cost + mux_cost + encoder_cost
-        #overal_logic_cost = utilities.estimate_no_luts(num_of_remained_prefixes)
+        #print("vvv: ", overal_logic_cost)
+
         if overal_no_brams <= parameters.MAX_AVAILABLE_BRAMS: # if the number of BRAMS is within the acceptable range
             score = overal_logic_cost + self.bram_cost * overal_no_brams
         else:  # doubling the BRAM cost
             score = overal_logic_cost + self.bram_cost * overal_no_brams * 2
-        '''
-        print('          ', candidate)
-        print(f' mu cost = {mu_cost}      mux cost = {mux_cost}      offset mem cost = {offset1_mem_cost}      bitmap_mem_cost = {bitmap_mem_cost}     offset2_mem_cost = {offset2_mem_cost}     num_of_remained_prefixes= {num_of_remained_prefixes}' )
-        print(f'SCORE = {score}\n')
-        '''
+
         del btree 
         detailed_result =  [overal_logic_cost, overal_no_brams, num_of_remained_prefixes] 
         return score , detailed_result
@@ -428,7 +419,7 @@ class prefix_optimize:
                 print(f'******* best bitmap_idx_not: {bitmap_idx_not}      best_overal_cost = {best_overal_cost}    # BRAMs: {bitmap_num_bram+offset2_mem_cost}')
             else:
                 break
-        print("******************************* Bitmap result", bitmap_idx_not)
+        print("**************** Bitmap result", bitmap_idx_not)
 
         # Find bits to be assigned to MUX
         mu_mux_bits = sum(bitmap_idx_not)
@@ -463,7 +454,7 @@ class prefix_optimize:
                             #print(f'num_mux_in: {num_mux_in}      self.prefixes[jj]: {self.prefixes[jj]}    {idx}     {bitmap_bitarray}          {mux_idx_temp}       {mux_idx}')
                     mux_bit_cost = utilities.estimate_no_luts(best_remained_num_prefix, (mu_mux_bits-cnt-1), (cnt+1), max(num_mux_in))
                     if  mux_bit_cost < best_mux_bit_cost:
-                        print (" * best_mux_bit_cost: ", best_mux_bit_cost, "          mux_bit_cost", mux_bit_cost,"      idx: ", idx  , "   remained_prefixe: ", remained_prefixes_0,  "    ", max(num_mux_in))
+                        #print (" * best_mux_bit_cost: ", best_mux_bit_cost, "          mux_bit_cost", mux_bit_cost,"      idx: ", idx  , "   remained_prefixe: ", remained_prefixes_0,  "    ", max(num_mux_in))
                         best_idx = idx
                         best_mux_bit_cost = mux_bit_cost
                     del btree0
@@ -473,11 +464,12 @@ class prefix_optimize:
                 candidate[best_idx] = 1
                 bitmap_idx_not[best_idx] = 0
                 mux_idx.append(best_idx)
-                print('--------- mux_idx', mux_idx,"   candidate:", candidate )
+                #print('--------- mux_idx', mux_idx,"   candidate:", candidate )
 
             print (" *** candidate: ", candidate, "       best_mux_bit_cost: ", best_mux_bit_cost, "      best_idx: ", best_idx)
 
         print (" *************** final candidate: ", candidate, "       best_mux_bit_cost: ", best_mux_bit_cost) 
+        return(candidate)
 
 
 
