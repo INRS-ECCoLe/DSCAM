@@ -27,11 +27,11 @@ $ pip install matplotlib
 ```
 
 ## User Instruction
-DSCAM uses a GA-base optimizer to automatically generate a well-tailored hardware architecture for the given target search table.
+DSCAM uses a GA-based optimizer to automatically generate a well-customized hardware architecture for the given target search table.
 The optimizer has two modes of usage:
 
 ### 1- Default hardware core generation mode:
-In this mode, the optimizer searches for the best hardware core configuration for the given search table using design space exploration. The user needs to assign the path of the target search content file to prefix_file_name variable in *.\Optimizer\main.py* and run main.py without any argument.
+In this mode, the optimizer searches for the best hardware core configuration for the given search table using design space exploration. The user needs to assign the path of the target search content file to *prefix_file_name* variable in *.\Optimizer\main.py* and run *main.py* without any argument.
 ```
 $ python .\Optimizer\main.py
 ```
@@ -39,7 +39,7 @@ The best-found solution in each generation of the GA algorithm is printed and af
 The design parameters can be adjusted in *.\Optimization\parameters.py*. This includes GA algorithm parameters and the important parameter of *BRAM_COSTS_TO_TEST* that defines the cost of BRAM resources compared to the logic resources in the cost function of the GA. Users can adjust the balance between BRAM and logic utilization in the hardware core based on their design priorities using this parameter. Assigning a higher value to *BRAM_COSTS_TO_TEST* signifies that BRAMs are more expensive resources. As a result, GA will likely find solutions that use less BRAM resources and more logic.
 
 ### 2- Plot mode: 
-This mode is used for better visualization of GA explored solution space and convergence projectile. It displays the estimated BRAM and logic utilization of all the candidate solutions (chromosomes) examined during GA operation. To activate this mode, simply specify the target search content file in *.\Optimizer\main.py* and run main.py with the plot_all argument.
+This mode is used for better visualization of GA explored solution space and convergence projectile. It displays the estimated BRAM and logic utilization of all the candidate solutions (chromosomes) examined during GA execution. To activate this mode, simply specify the target search content file in *.\Optimizer\main.py* and run main.py with the plot_all argument.
 ```
 $ python .\Optimizer\main.py plot_all
 ```

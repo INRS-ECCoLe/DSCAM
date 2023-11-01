@@ -83,7 +83,7 @@ index = 0
 if args != [] and args[0] == 'debug':  
 # checks the score of one given solution (candidate) and generates corresponding memory contents and parameters.vhd
     #candidate = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    candidate =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]             
+    candidate =  [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]            
     if 1 not in candidate:
         print("ERROR: at least one input bit must be assigned to MUX!")
         quit()
@@ -95,6 +95,7 @@ if args != [] and args[0] == 'debug':
                 p1 = prefix_optimize(prefix[length], length)
                 score_result = p1.score_calc(candidate)
                 print(f' ------------- Score: {score_result[0]}     Remained Prefixes: {score_result[1][2]}')
+                print(score_result)
                 # Generate memory content files
                 pkg_data.append(p1.generate_result_files(candidate))
                 candidate_vec.append(candidate[::-1])
